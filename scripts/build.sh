@@ -20,7 +20,7 @@ cd "$BUILD_DIR"
 
 echo "Building LVGL MicroPython for M5Stack Tough..."
 
-python3 make.py esp32 --display-config=M5Stack-Tough.toml
+python3 make.py esp32 --toml=display_configs/M5Stack-Tough.toml
 
 echo ""
 echo "Build complete!"
