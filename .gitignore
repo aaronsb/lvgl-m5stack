@@ -1,0 +1,23 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Build artifacts
+*.bin
+build/
+output/
+
+# lvgl_micropython clone (fetched by build script)
+lvgl_micropython/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
