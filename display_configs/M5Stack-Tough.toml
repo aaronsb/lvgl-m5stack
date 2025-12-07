@@ -37,7 +37,7 @@ reset_pin = 33
 backlight_on_state = "ili9341.STATE_HIGH"
 color_space = "lv.COLOR_FORMAT.RGB565"
 color_byte_order = "ili9341.BYTE_ORDER_BGR"
-rgb565_byte_swap = true
+rgb565_byte_swap = 1
 
 # Orientation table for rotation support
 # Values: [0°, 90°, 180°, 270°] - M5Stack Tough needs 180° rotation

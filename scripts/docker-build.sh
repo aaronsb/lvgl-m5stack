@@ -35,6 +35,7 @@ docker run --rm \
     -e LOCAL_UID=$(id -u) \
     -e LOCAL_GID=$(id -g) \
     -v "$PROJECT_DIR/display_configs:/config:ro" \
+    -v "$PROJECT_DIR/frozen:/frozen:ro" \
     -v "$PROJECT_DIR/output:/output" \
     m5tough-lvgl build >> "$LOG_FILE" 2>&1
 echo "      Done."
