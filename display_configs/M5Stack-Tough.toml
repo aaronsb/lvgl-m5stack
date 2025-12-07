@@ -1,18 +1,16 @@
 # M5Stack Tough display configuration
-# - ILI9342C display (ILI9341 compatible, 320x240)
-# - Touch controller at I2C 0x2E
-# - INVON required for correct colors
+# Based on working CYD-2432S024C.toml format
 
 [MCU.esp32]
 BOARD = "ESP32_GENERIC"
 BOARD_VARIANT = "SPIRAM"
 uart_repl_bitrate = 115200
 
-# SPI bus for display (VSPI)
+# SPI bus for display (VSPI - host 2)
 [SPI.Bus.spi_bus]
 host = 2
 mosi = 23
-miso = -1
+miso = 19
 sck = 18
 
 [SPIBus.display_bus]
@@ -21,40 +19,34 @@ freq = 40000000
 dc = 15
 cs = 5
 
-# I2C bus for touch and power management
-[I2C.Bus.i2c_bus]
-host = 0
-scl = 22
-sda = 21
-freq = 400000
-
-# Touch controller at 0x2E (custom protocol, may need driver work)
-# [I2C.Device.indev_device]
-# bus = "i2c_bus"
-# dev_id = 0x2E
-# reg_bits = 8
+# I2C bus for touch (disabled for now - causes import issues)
+# [I2C.Bus.i2c_bus]
+# host = 0
+# scl = 22
+# sda = 21
+# freq = 400000
 
 # ILI9341 display (ILI9342C compatible)
+# M5Stack Tough: 320x240 landscape
 [ILI9341.display]
 data_bus = "display_bus"
 display_width = 320
 display_height = 240
 backlight_pin = 32
 reset_pin = 33
-backlight_on_state = 1
+backlight_on_state = "ili9341.STATE_HIGH"
 color_space = "lv.COLOR_FORMAT.RGB565"
 color_byte_order = "ili9341.BYTE_ORDER_BGR"
-rgb565_byte_swap = false
+rgb565_byte_swap = true
 
-# Rotation/mirror settings for M5Stack Tough
-# rotation=180, mirror=True equivalent
+# Orientation table for rotation support
+# Values: [0°, 90°, 180°, 270°] - M5Stack Tough needs 180° rotation
 [display._ORIENTATION_TABLE]
 value = [0, 96, 192, 160]
 
 [display.set_power]
 params = [true]
 
-# M5Stack Tough ILI9342C needs INVON (0x21) after init
 [display.init]
 params = [1]
 

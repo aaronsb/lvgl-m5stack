@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y \
     dfu-util \
     libusb-1.0-0 \
     gosu \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && pip3 install toml
 
 # Cache layer: clone lvgl_micropython and fetch heavy deps
 FROM base AS deps
