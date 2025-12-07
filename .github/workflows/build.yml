@@ -13,6 +13,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Get version
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION=$(cat VERSION)
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -23,15 +34,28 @@ jobs:
             -v ${{ github.workspace }}/output:/output \
             m5tough-lvgl build
 
+      - name: Rename firmware with version
+        run: |
+          mv output/m5tough-lvgl-firmware.bin output/m5tough-lvgl-${{ steps.version.outputs.version }}.bin
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: firmware
-          path: output/m5tough-lvgl-firmware.bin
+          path: output/m5tough-lvgl-${{ steps.version.outputs.version }}.bin
 
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: output/m5tough-lvgl-firmware.bin
+          files: output/m5tough-lvgl-${{ steps.version.outputs.version }}.bin
           generate_release_notes: true
+          body: |
+            ## M5Stack Tough LVGL Firmware v${{ steps.version.outputs.version }}
+
+            ### Installation
+            ```bash
+            pip install esptool
+            esptool.py --port /dev/ttyACM0 --baud 460800 erase_flash
+            esptool.py --port /dev/ttyACM0 --baud 460800 write_flash 0x0 m5tough-lvgl-${{ steps.version.outputs.version }}.bin
+            ```
