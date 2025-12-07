@@ -1,0 +1,37 @@
+name: Build Firmware
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build firmware
+        run: |
+          docker build -t m5tough-lvgl .
+          docker run --rm \
+            -v ${{ github.workspace }}/output:/output \
+            m5tough-lvgl build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: output/m5tough-lvgl-firmware.bin
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: output/m5tough-lvgl-firmware.bin
+          generate_release_notes: true
